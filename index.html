@@ -7,18 +7,8 @@
   <meta name="description" content="Pusat dokumen dan referensi Griya Area Makassar.">
   <meta name="theme-color" content="#0b2250">
   <link rel="icon" type="image/webp" href="images/bsi.webp">
-  <!-- GANTI NAMADOMAIN-ANDA.com dengan domain Hostinger Anda (wajib alamat lengkap agar pratinjau WhatsApp muncul) -->
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Everything Griya Area Makassar">
-  <meta property="og:description" content="Pusat dokumen dan referensi Griya Area Makassar.">
-  <meta property="og:url" content="https://NAMADOMAIN-ANDA.com/">
-  <meta property="og:image" content="https://NAMADOMAIN-ANDA.com/images/og-image.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta name="twitter:card" content="summary_large_image">
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    :root{--navy-900:#071634;--navy-800:#0b2250;--navy-600:#1f4f9a;--navy-400:#3b6bb5;--ink:#0b2250}
     html{min-height:100%;background:#0b2250;overflow-y:scroll;scrollbar-gutter:stable}
     body{font-family:"Segoe UI","Helvetica Neue",Arial,system-ui,sans-serif;color:#fff;-webkit-font-smoothing:antialiased}
     .bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:linear-gradient(180deg,#071634 0%,#0b2250 28%,#1f4f9a 68%,#6a97d6 100%)}
@@ -31,50 +21,41 @@
     h1{font-size:clamp(.95rem,4.7vw,2.1rem);font-weight:600;letter-spacing:.01em;line-height:1.2;white-space:nowrap}
     .rule{width:56px;height:2px;margin:16px auto;background:linear-gradient(90deg,transparent,#fff,transparent)}
     header p{font-size:.95rem;color:#d3dff4}
-    .link{
-      display:flex;align-items:center;gap:16px;padding:20px 22px;border-radius:14px;
-      background:linear-gradient(180deg,rgba(255,255,255,.16) 0%,rgba(255,255,255,.06) 100%),rgba(7,22,52,.38);
-      -webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%);
-      border:1.5px solid rgba(255,255,255,.62);color:#fff;text-decoration:none;
-      box-shadow:0 10px 28px rgba(2,8,24,.45),0 2px 6px rgba(2,8,24,.3),inset 0 1px 0 rgba(255,255,255,.35);
-      transition:transform .3s cubic-bezier(.22,.61,.36,1),box-shadow .3s ease,border-color .2s ease,background-color .2s ease;
+    /* Kaca bening tanpa blur, agar latar dan gerak anginnya terlihat jelas: satu gaya bersama untuk tombol folder, subfolder, dan kotak info */
+    .link,.sub a,.info{
+      background:linear-gradient(180deg,rgba(255,255,255,.07) 0%,rgba(255,255,255,.015) 100%),rgba(7,22,52,.08);
+      border:1.5px solid rgba(255,255,255,.6);color:#fff;text-shadow:0 1px 3px rgba(2,8,24,.55);
+      box-shadow:0 6px 20px rgba(2,8,24,.22),inset 0 1px 0 rgba(255,255,255,.28);
     }
-    .link:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.9);box-shadow:0 14px 34px rgba(2,8,24,.52),0 3px 8px rgba(2,8,24,.35),inset 0 1px 0 rgba(255,255,255,.45)}
-    .link:focus-visible{outline:3px solid #cfe0ff;outline-offset:3px}
-    .ico{flex:none;width:44px;height:44px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.55);box-shadow:inset 0 1px 0 rgba(255,255,255,.3);color:#fff}
+    .link{display:flex;align-items:center;gap:16px;width:100%;padding:20px 22px;border-radius:14px;font:inherit;text-align:left;text-decoration:none;cursor:pointer;-webkit-tap-highlight-color:transparent;
+      transition:transform .3s cubic-bezier(.22,.61,.36,1),border-color .2s ease,box-shadow .3s ease}
+    .link:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.9);box-shadow:0 12px 30px rgba(2,8,24,.42),inset 0 1px 0 rgba(255,255,255,.4)}
+    .link:active{transform:none}
+    .link:focus-visible,.sub a:focus-visible{outline:3px solid #cfe0ff;outline-offset:3px}
+    .ico{flex:none;width:44px;height:44px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.55);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
     .ico svg{width:24px;height:24px}
     .link strong{flex:1;font-size:1.05rem;font-weight:700;letter-spacing:.03em}
-    .chev{flex:none;width:20px;height:20px;color:#dbe8ff}
-    .folder{width:100%;border:0;cursor:pointer;font:inherit;text-align:left}
-    .folder .chev{transition:transform .45s cubic-bezier(.22,.61,.36,1)}
-    .folder[aria-expanded="true"] .chev{transform:rotate(90deg)}
-    .panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s cubic-bezier(.22,.61,.36,1)}
+    .chev{flex:none;width:20px;height:20px;color:#dbe8ff;transition:transform .45s cubic-bezier(.22,.61,.36,1)}
+    .link[aria-expanded="true"] .chev{transform:rotate(90deg)}
+
+    /* Buka/tutup: hanya tinggi panel yang dianimasikan. Tidak ada opacity/transform pada induk kartu kaca,
+       sehingga tampilannya sama dari awal sampai akhir */
+    .panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .55s cubic-bezier(.22,.61,.36,1)}
     .panel.open{grid-template-rows:1fr}
-    .panel-inner{overflow:hidden;min-height:0;margin:0 -26px;opacity:0;transform:translateY(-8px);transition:opacity .4s ease,transform .5s cubic-bezier(.22,.61,.36,1)}
-    .panel.open .panel-inner{opacity:1;transform:none}
+    .panel-inner{overflow:hidden;min-height:0;margin:0 -26px}
     .panel-pad{padding:0 26px 22px}
-    .sub{visibility:hidden;transition:visibility 0s linear .5s}
+    .sub{display:flex;flex-direction:column;gap:10px;padding:12px 0 0 18px;margin-left:22px;border-left:2px solid rgba(255,255,255,.55);visibility:hidden;transition:visibility 0s linear .55s}
     .panel.open .sub{visibility:visible;transition-delay:0s}
-    .sub{display:flex;flex-direction:column;gap:10px;padding:12px 0 0 18px;margin-left:22px;border-left:2px solid rgba(255,255,255,.55)}
-    .sub a{display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:12px;
-      background:linear-gradient(180deg,rgba(255,255,255,.14) 0%,rgba(255,255,255,.05) 100%),rgba(7,22,52,.38);
-      -webkit-backdrop-filter:blur(12px) saturate(140%);backdrop-filter:blur(12px) saturate(140%);
-      border:1.5px solid rgba(255,255,255,.55);color:#fff;text-decoration:none;font-weight:600;font-size:.95rem;
-      box-shadow:0 6px 18px rgba(2,8,24,.4),0 1px 4px rgba(2,8,24,.3),inset 0 1px 0 rgba(255,255,255,.3);
-      transition:background-color .15s ease,border-color .15s ease,box-shadow .2s ease}
-    .sub a:hover{border-color:rgba(255,255,255,.9);background-color:rgba(255,255,255,.1);box-shadow:0 8px 22px rgba(2,8,24,.48),0 1px 4px rgba(2,8,24,.3),inset 0 1px 0 rgba(255,255,255,.4)}
-    .sub a:focus-visible{outline:3px solid #cfe0ff;outline-offset:2px}
+    .sub a{display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:12px;font-weight:600;font-size:.95rem;text-decoration:none;-webkit-tap-highlight-color:transparent;
+      transition:background-color .15s ease,border-color .15s ease}
+    .sub a:hover{border-color:rgba(255,255,255,.9);background-color:rgba(255,255,255,.1)}
     .sub svg{flex:none;width:20px;height:20px;color:#dbe8ff}
-    .info{margin-top:22px;padding:14px 16px;border-radius:12px;
-      background:linear-gradient(180deg,rgba(255,255,255,.1) 0%,rgba(255,255,255,.04) 100%),rgba(7,22,52,.38);
-      -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
-      border:1.5px solid rgba(255,255,255,.5);box-shadow:0 6px 18px rgba(2,8,24,.38),inset 0 1px 0 rgba(255,255,255,.25);
-      font-size:.85rem;line-height:1.5;color:#eef3fc;display:flex;flex-direction:column;gap:10px}
+    .panel.open .sub a{animation:rise .5s cubic-bezier(.22,.61,.36,1) backwards;animation-delay:calc(var(--i,0)*55ms)}
+    @keyframes rise{from{opacity:0;transform:translateY(-10px)}}
+
+    .info{margin-top:22px;padding:14px 16px;border-radius:12px;font-size:.85rem;line-height:1.5;color:#eef3fc}
     .info p{display:flex;gap:10px;align-items:flex-start}
     .info svg{flex:none;width:18px;height:18px;margin-top:2px;color:#cfe0ff}
-    .info a{color:#fff;font-weight:600;text-underline-offset:3px}
-    .info a:focus-visible{outline:3px solid #cfe0ff;outline-offset:2px;border-radius:2px}
-    footer{position:relative;z-index:2;margin-top:auto;padding:16px 20px 24px;text-align:center;font-size:.78rem;line-height:1.5;color:#071634}
     .batik{display:block;width:100%;height:100%}
 
     /* Gerak angin: tiap lapis adalah elemen sendiri yang digerakkan GPU (transform saja), kilau mengalir di sepanjang garis */
@@ -100,12 +81,10 @@
     @keyframes gust{from{stroke-dashoffset:0}to{stroke-dashoffset:-1000}}
     @media (max-width:640px){.streak.s2{display:none}}
     @media (prefers-reduced-motion:reduce){.wl{animation:none;will-change:auto}.streak{animation:none;display:none}}
+    html.busy .wl,html.busy .streak{animation-play-state:paused}
     html.calm .wl{animation:none;will-change:auto}
     html.calm .streak{animation:none;display:none}
-    @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
-      .link,.sub a,.info{background:linear-gradient(180deg,rgba(255,255,255,.14) 0%,rgba(255,255,255,.05) 100%),rgba(7,22,52,.62)}
-    }
-        @media (prefers-reduced-motion:reduce){.link,.panel,.panel-inner,.folder .chev{transition:none}.link:hover{transform:none}}
+    @media (prefers-reduced-motion:reduce){.link,.panel,.chev{transition:none}.link:hover{transform:none}.panel.open .sub a{animation:none}}
   </style>
 </head>
 <body>
@@ -413,11 +392,11 @@
     <div class="panel" id="subfolders">
       <div class="panel-inner"><div class="panel-pad">
         <nav class="sub" aria-label="Subfolder">
-          <a href="https://bsicenter-my.sharepoint.com/:f:/g/personal/zaenab_nur_bankbsi_co_id/IgAiFcgA8gJzTbJkIgNg7xT2AWoiBYhWQkffQLOw6TAClgs?e=ZTay2u" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>Surat Pricing Terbaru</a>
-          <a href="https://bsicenter-my.sharepoint.com/:f:/g/personal/zaenab_nur_bankbsi_co_id/IgC5xORbj-tcSbhPxApmkFTEAd8I-6_tAIrT-dU8J8amQi8?e=GVUMSY" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/></svg>Kalkulator Griya</a>
-          <a href="https://bsicenter-my.sharepoint.com/:f:/g/personal/zaenab_nur_bankbsi_co_id/IgDL9cJJNvBjSK3tpxbKDXLuAbdRMBFJyXUg0esyB6-9bW4?e=9SKzmR" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8 20h8"/></svg>Materi Sosialisasi</a>
-          <a href="https://bsicenter-my.sharepoint.com/:f:/g/personal/zaenab_nur_bankbsi_co_id/IgD2Qwk9MAIKSrhSy8d5MlvfARrJyftFMyTFjsfAzdn-q2Q?e=nX3MJO" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>Regulasi &amp; Ketentuan Terbaru</a>
-          <a href="https://bsicenter-my.sharepoint.com/:f:/g/personal/zaenab_nur_bankbsi_co_id/IgANsMMCx9TURa35qig0T2ZJAdwA5KF9RNGyob-JLuEXWcQ?e=uf6vdA" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6M4 21h16"/></svg>Data Developer Area Makassar</a>
+          <a style="--i:0" href="https://bsicenter-my.sharepoint.com/:f:/g/personal/zaenab_nur_bankbsi_co_id/IgAiFcgA8gJzTbJkIgNg7xT2AWoiBYhWQkffQLOw6TAClgs?e=ZTay2u" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>Surat Pricing Terbaru</a>
+          <a style="--i:1" href="https://bsicenter-my.sharepoint.com/:f:/g/personal/zaenab_nur_bankbsi_co_id/IgC5xORbj-tcSbhPxApmkFTEAd8I-6_tAIrT-dU8J8amQi8?e=GVUMSY" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/></svg>Kalkulator Griya</a>
+          <a style="--i:2" href="https://bsicenter-my.sharepoint.com/:f:/g/personal/zaenab_nur_bankbsi_co_id/IgDL9cJJNvBjSK3tpxbKDXLuAbdRMBFJyXUg0esyB6-9bW4?e=9SKzmR" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8 20h8"/></svg>Materi Sosialisasi</a>
+          <a style="--i:3" href="https://bsicenter-my.sharepoint.com/:f:/g/personal/zaenab_nur_bankbsi_co_id/IgD2Qwk9MAIKSrhSy8d5MlvfARrJyftFMyTFjsfAzdn-q2Q?e=nX3MJO" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>Regulasi &amp; Ketentuan Terbaru</a>
+          <a style="--i:4" href="https://bsicenter-my.sharepoint.com/:f:/g/personal/zaenab_nur_bankbsi_co_id/IgANsMMCx9TURa35qig0T2ZJAdwA5KF9RNGyob-JLuEXWcQ?e=uf6vdA" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6M4 21h16"/></svg>Data Developer Area Makassar</a>
         </nav>
       </div></div>
     </div>
@@ -447,7 +426,11 @@
     },1200);
   })();
   var b=document.getElementById('folderBtn'),p=document.getElementById('subfolders');
+  var busy;
   b.addEventListener('click',function(){
+    var r=document.documentElement;
+    r.classList.add('busy');clearTimeout(busy);
+    busy=setTimeout(function(){r.classList.remove('busy')},750);
     var o=p.classList.toggle('open');
     b.setAttribute('aria-expanded',o);
   });
