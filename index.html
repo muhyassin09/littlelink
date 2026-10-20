@@ -25,7 +25,7 @@
 
     /* Folder: hampir transparan (latar terlihat) dengan outline putih tebal */
     .link,.sub a{
-      background:rgba(255,255,255,.03);border:3px solid #fff;color:#fff;text-shadow:0 1px 3px rgba(2,8,24,.5);
+      background:rgba(255,255,255,.03);border:1.5px solid rgba(255,255,255,.85);color:#fff;text-shadow:0 1px 3px rgba(2,8,24,.5);
       box-shadow:0 3px 10px rgba(2,8,24,.15);
     }
     .link{display:flex;align-items:center;gap:12px;width:100%;padding:11px 14px;border-radius:12px;font:inherit;text-align:left;text-decoration:none;cursor:pointer;-webkit-tap-highlight-color:transparent;
@@ -33,7 +33,7 @@
     .link:hover{transform:translateY(-1px);background:rgba(255,255,255,.12);box-shadow:0 8px 22px rgba(2,8,24,.3)}
     .link:active{transform:none}
     .link:focus-visible,.sub a:focus-visible{outline:3px solid #cfe0ff;outline-offset:3px}
-    .ico{flex:none;width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:transparent;border:2px solid rgba(255,255,255,.9)}
+    .ico{flex:none;width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:transparent;border:1.5px solid rgba(255,255,255,.8)}
     .ico svg{width:19px;height:19px}
     .link strong{flex:1;min-width:0;font-size:clamp(.78rem,3.6vw,.92rem);font-weight:700;letter-spacing:.03em;overflow-wrap:anywhere}
     .chev{flex:none;width:17px;height:17px;color:#fff;transition:transform .45s cubic-bezier(.22,.61,.36,1)}
@@ -55,7 +55,7 @@
     @keyframes fade{from{opacity:0}}
     @keyframes fadeout{to{opacity:0}}
 
-    .info{margin-top:20px;padding:12px 14px;border-radius:12px;font-size:.82rem;line-height:1.5;color:#eef3fc;background:rgba(255,255,255,.03);border:2px solid rgba(255,255,255,.7);box-shadow:0 3px 10px rgba(2,8,24,.15)}
+    .info{margin-top:20px;padding:12px 14px;border-radius:12px;font-size:.82rem;line-height:1.5;color:#eef3fc;background:rgba(255,255,255,.03);border:1.5px solid rgba(255,255,255,.6);box-shadow:0 3px 10px rgba(2,8,24,.15)}
     .info p{display:flex;gap:10px;align-items:flex-start}
     .info svg{flex:none;width:17px;height:17px;margin-top:2px;color:#cfe0ff}
 
@@ -163,11 +163,20 @@
         while(pick.length<12&&more){more=false;for(sd=0;sd<4;sd++)if(bk[sd].length&&pick.length<12){pick.push(bk[sd].splice(Math.floor(R()*bk[sd].length),1)[0]);more=true}}
         while(pick.length<8&&rest.length)pick.push(rest.splice(Math.floor(R()*rest.length),1)[0]);
         var LEN=[[12,26],[40,75],[110,170]]; /* pendek, sedang, panjang (px) */
+        /* Tiap garis dilalui beberapa kereta (2-4), jarak antar kereta dibagi rata di sepanjang siklus
+           dengan sedikit variasi, dan tiap kereta punya panjang (pendek/sedang/panjang) sendiri.
+           Ubah TRAINS_PER_LINE untuk menambah atau mengurangi jumlahnya. */
+        var TRAINS_PER_LINE=[3,2,4,3];
         pick.forEach(function(p,idx){
-          var e=el('path',{d:mk(p)});gusts.appendChild(e);
-          var cat=LEN[idx%3],L=e.getTotalLength(),D=Math.round(Math.min(cat[0]+R()*(cat[1]-cat[0]),L*.45)),idle=10+R()*L*.15,sp=(90+R()*50)*.13,dur=(L+D+idle)/sp;
-          e.setAttribute('class','train'+(g++>=6?' t-extra':''));
-          e.setAttribute('style','stroke-width:'+p.sw+';stroke-opacity:'+(.5+R()*.2).toFixed(2)+';stroke-dasharray:'+D+' '+Math.ceil(L+D+20)+';--a:'+D+';--b:'+(-Math.ceil(L+idle))+';animation-duration:'+dur.toFixed(1)+'s;animation-delay:-'+(R()*dur).toFixed(1)+'s');
+          var cnt=TRAINS_PER_LINE[idx%TRAINS_PER_LINE.length],L,c;
+          for(c=0;c<cnt;c++){
+            var e=el('path',{d:mk(p)});gusts.appendChild(e);
+            L=e.getTotalLength();
+            var cat=LEN[(idx+c)%3],D=Math.round(Math.min(cat[0]+R()*(cat[1]-cat[0]),L*.35)),idle=10+R()*L*.15,sp=(90+R()*50)*.13,dur=(L+D+idle)/sp,ph=(c+R()*.4)/cnt;
+            /* di layar kecil: hanya 6 garis pertama, masing-masing 2 kereta */
+            e.setAttribute('class','train'+((idx>=6||c>=2)?' t-extra':''));
+            e.setAttribute('style','stroke-width:'+p.sw+';stroke-opacity:'+(.5+R()*.2).toFixed(2)+';stroke-dasharray:'+D+' '+Math.ceil(L+D+20)+';--a:'+D+';--b:'+(-Math.ceil(L+idle))+';animation-duration:'+dur.toFixed(1)+'s;animation-delay:-'+(ph*dur).toFixed(1)+'s');
+          }
         });
       }
 
